@@ -5,8 +5,6 @@ RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 WORKDIR /var/www
 
-#EXPOSE 8000
 EXPOSE 9000
 
-#CMD ["symfony", "server:start"]
 CMD ["php-fpm"]
