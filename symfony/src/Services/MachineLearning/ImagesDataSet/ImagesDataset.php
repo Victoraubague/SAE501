@@ -36,6 +36,10 @@ class ImagesDataset
         }
         return self::$instance;
     }
+
+    /**
+     * @throws \Exception
+     */
     private function __construct()
     {
         throw new \Exception(
