@@ -3,15 +3,17 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile
-    restart: unless-stopped
     env_file:
       - .docker/.env
     volumes:
       - ./symfony:/var/www
+      - ./.docker/php.ini:/usr/local/etc/php/php.ini
     working_dir: /var/www
     networks:
       - app_network
     command: sh -c "composer install && php-fpm"
+    #command: "sleep infinity"
+    mem_limit: 2g
 
   nginx:
     image: nginx:alpine
