@@ -11,6 +11,7 @@ services:
     working_dir: /var/www
     networks:
       - app_network
+    command: sh -c "composer install && php-fpm"
 
   nginx:
     image: nginx:alpine
