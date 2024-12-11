@@ -1,5 +1,6 @@
 services:
   symfony:
+    container_name: symfony_c_sae501
     build:
       context: .
       dockerfile: .docker/Dockerfile
