@@ -1,0 +1,9 @@
+<h1>Upload d'image via AJAX</h1>
+<form id="upload-form" enctype="multipart/form-data">
+    <input type="file" name="image" id="image" accept="image/*" required>
+    <button type="button" id="upload-button">Envoyer</button>
+</form>
+<div id="response"></div>
+<div id="loading" style="display: none;">Chargement en cours...</div>
+
+<script src="{{ asset('js/upload.js') }}"></script>
