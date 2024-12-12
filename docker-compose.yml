@@ -4,11 +4,10 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile
-    env_file:
-      - .docker/.env
     volumes:
       - ./symfony:/var/www
-      - ./.docker/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "9003:9003"
     working_dir: /var/www
     networks:
       - app_network

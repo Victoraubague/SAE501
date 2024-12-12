@@ -6,28 +6,12 @@ use Rubix\ML\Datasets\Dataset;
 
 class ImagesDataset
 {
-    private Dataset $dataset;
-    public function getDataset(): Dataset
-    {
-        return $this->dataset;
-    }
-    public function setDataset(Dataset $dataset): void
-    {
-        $this->dataset = $dataset;
-    }
+    public protected(set) Dataset $dataset;
     /**
      * List of labels for the $dataset
      * @var string[]
      */
-    private array $labels = [];
-    public function getLabels(): array
-    {
-        return $this->labels;
-    }
-    public function setLabels(array $labels): void
-    {
-        $this->labels = $labels;
-    }
+    public protected(set) array $labels = [];
     private static ?ImagesDataset $instance = null;
     static public function getInstance(): ImagesDataset
     {
