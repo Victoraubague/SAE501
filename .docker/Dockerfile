@@ -17,6 +17,11 @@ COPY /.docker/php/conf.d/ /usr/local/etc/php/conf.d/
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
 
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install gd
+
 #symfony
 EXPOSE 9000
 #xdebug
