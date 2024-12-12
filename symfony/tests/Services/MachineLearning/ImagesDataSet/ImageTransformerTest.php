@@ -186,6 +186,7 @@ class ImageTransformerTest extends TestCase
     }
     public function testGetUnlabeledDatasetFromTransformedImages(): void
     {
+        ini_set('memory_limit', '1024M');
         $dataset = $this->transformer->getDatasetFromTransformedImages(
             [
                 [imagecreatefrompng(__DIR__ . "/resources/good_image_1.png")],
@@ -194,5 +195,10 @@ class ImageTransformerTest extends TestCase
             ]
         );
         $this->assertInstanceOf(Unlabeled::class, $dataset);
+
+        var_dump($this->transformer->getDatasetFromImageTypes(
+            ImageTypes::TRAINING
+        ));
+        ini_set('memory_limit', '128M');
     }
 }

@@ -79,4 +79,38 @@ class ImageTransformer
         }
         return Unlabeled::build($images)->apply(new ImageVectorizer(true));
     }
+
+    /**
+     * @return array<Dataset|array<string>> ['dataset' => Dataset, 'labels' => Labels]
+     */
+    public function getDatasetFromImageTypes(
+        ImageTypes $type
+    ): array
+    {
+        $images = [];
+        $labels = [];
+        foreach (ImageValues::cases() as $values) {
+            //get directory path
+            $folderPath = $this->getFolderImagesPathFromTypeAndValue($values, $type);
+            //get images paths
+            $imagesPaths = $this->getImagesPathsListFromFolderImagesPath($folderPath);
+            //get transformed images and labels
+            [
+                'images' => $images,
+                'labels' => $labels
+            ] = $this->getTransformedImagesAndLabelsFromImagesPathsList(
+                $imagesPaths,
+                $values->value
+            );
+            array_push($images, ...$images);
+            array_push($labels, ...$labels);
+        }
+        return [
+            'dataset' => $this->getDatasetFromTransformedImages(
+                $images,
+                $type === ImageTypes::TRAINING ? $labels : null
+            ),
+            'labels' => $labels
+        ];
+    }
 }
