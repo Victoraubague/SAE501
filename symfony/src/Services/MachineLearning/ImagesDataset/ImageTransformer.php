@@ -4,6 +4,10 @@ namespace App\Services\MachineLearning\ImagesDataset;
 
 use Exception;
 use GdImage;
+use Rubix\ML\Datasets\Dataset;
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Datasets\Unlabeled;
+use Rubix\ML\Transformers\ImageVectorizer;
 
 class ImageTransformer
 {
@@ -37,15 +41,14 @@ class ImageTransformer
     {
         return glob($folderPath . '/*.png');
     }
-
     /**
      * Get the list of gd images and labels from a list of images paths
      * @param string[] $imagesPathsList
      * @param string $label The common label associated with the images
-     * @return array<array<GdImage>|string> ['images' => Transformed images, 'labels' => Labels]
+     * @return array<array<array<GdImage>>|array<string>> ['images' => Transformed images, 'labels' => Labels]
      * @throws Exception If one image is not found
      */
-    public function getDatasetAndLabelsFromImagesPathsList(
+    public function getTransformedImagesAndLabelsFromImagesPathsList(
         array $imagesPathsList,
         string $label,
     ): array
@@ -60,5 +63,20 @@ class ImageTransformer
             'images' => $TransformedImages,
             'labels' => $labels
         ];
+    }
+    /**
+     * Get the list of gd images and labels from a list of images paths
+     * @param array<array<GdImage> $images
+     * @throws Exception If one image is not found
+     */
+    public function getDatasetFromTransformedImages(
+        array $images,
+        ?array $labels = null
+    ): Dataset
+    {
+        if($labels) {
+            return Labeled::build($images, $labels)->apply(new ImageVectorizer(true));
+        }
+        return Unlabeled::build($images)->apply(new ImageVectorizer(true));
     }
 }

@@ -7,6 +7,8 @@ use App\Services\MachineLearning\ImagesDataset\ImageTypes;
 use App\Services\MachineLearning\ImagesDataset\ImageValues;
 use GdImage;
 use PHPUnit\Framework\TestCase;
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Datasets\Unlabeled;
 
 class ImageTransformerTest extends TestCase
 {
@@ -130,12 +132,12 @@ class ImageTransformerTest extends TestCase
         $this->assertIsArray($imagesPaths);
         $this->assertNotEmpty($imagesPaths);
     }
-    public function testGetDatasetAndLabelsFromImagesPathsList(): void
+    public function testTransformedImagesAndLabelsFromImagesPathsList(): void
     {
         [
             'images' => $images,
             'labels' => $labels
-        ] = $this->transformer->getDatasetAndLabelsFromImagesPathsList(
+        ] = $this->transformer->getTransformedImagesAndLabelsFromImagesPathsList(
             [
                 __DIR__ . "/resources/good_image_1.png",
                 __DIR__ . "/resources/good_image_2.png",
@@ -156,7 +158,7 @@ class ImageTransformerTest extends TestCase
         [
             'images' => $images,
             'labels' => $labels
-        ] = $this->transformer->getDatasetAndLabelsFromImagesPathsList(
+        ] = $this->transformer->getTransformedImagesAndLabelsFromImagesPathsList(
             [
                 __DIR__ . "/resources/good_image_1.png",
                 __DIR__ . "/resources/good_image_2.png",
@@ -165,5 +167,32 @@ class ImageTransformerTest extends TestCase
             ],
             "7"
         );
+    }
+    public function testGetLabeledDatasetFromTransformedImages(): void
+    {
+        $dataset = $this->transformer->getDatasetFromTransformedImages(
+            [
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_1.png")],
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_2.png")],
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_3.png")]
+            ],
+            [
+                "7",
+                "7",
+                "3"
+            ]
+        );
+        $this->assertInstanceOf(Labeled::class, $dataset);
+    }
+    public function testGetUnlabeledDatasetFromTransformedImages(): void
+    {
+        $dataset = $this->transformer->getDatasetFromTransformedImages(
+            [
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_1.png")],
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_2.png")],
+                [imagecreatefrompng(__DIR__ . "/resources/good_image_3.png")]
+            ]
+        );
+        $this->assertInstanceOf(Unlabeled::class, $dataset);
     }
 }
