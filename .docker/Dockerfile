@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd \
     && docker-php-ext-install gd
 
+RUN pecl install pcov \
+    && docker-php-ext-enable pcov
+
 #symfony
 EXPOSE 9000
 #xdebug

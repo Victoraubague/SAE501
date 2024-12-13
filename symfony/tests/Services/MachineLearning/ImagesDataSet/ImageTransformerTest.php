@@ -7,6 +7,7 @@ use App\Services\MachineLearning\ImagesDataset\ImageTypes;
 use App\Services\MachineLearning\ImagesDataset\ImageValues;
 use GdImage;
 use PHPUnit\Framework\TestCase;
+use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Unlabeled;
 
@@ -15,7 +16,7 @@ class ImageTransformerTest extends TestCase
     public ImageTransformer $transformer;
     public function setUp(): void
     {
-        $this->transformer = new ImageTransformer();
+        $this->transformer = new ImageTransformer(__DIR__ . "/resources/images");
     }
     public function testTransformImage(): void
     {
@@ -40,88 +41,26 @@ class ImageTransformerTest extends TestCase
             __DIR__ . "/resources/bad_image.png"
         );
     }
-    public function testGetFolderImagesPathFromTypeAndValue(): void
+    public function testGetFolderImagesPathFromTypeAndValueForTraining(): void
     {
         $this->assertEquals(
-            getcwd() . "/resources/images/training/0",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::ZERO, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/1",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::ONE, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/2",
+            "/var/www/tests/Services/MachineLearning/ImagesDataSet/resources/images/training/2",
             $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::TWO, ImageTypes::TRAINING)
         );
         $this->assertEquals(
-            getcwd() . "/resources/images/training/3",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::THREE, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/4",
+            "/var/www/tests/Services/MachineLearning/ImagesDataSet/resources/images/training/4",
             $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::FOUR, ImageTypes::TRAINING)
         );
+    }
+    public function testGetFolderImagesPathFromTypeAndValueForTesting(): void
+    {
         $this->assertEquals(
-            getcwd() . "/resources/images/training/5",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::FIVE, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/6",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::SIX, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/7",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::SEVEN, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/8",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::EIGHT, ImageTypes::TRAINING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/training/9",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::NINE, ImageTypes::TRAINING)
-        );
-
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/0",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::ZERO, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/1",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::ONE, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/2",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::TWO, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/3",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::THREE, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/4",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::FOUR, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/5",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::FIVE, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/6",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::SIX, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/7",
+            "/var/www/tests/Services/MachineLearning/ImagesDataSet/resources/images/testing/7",
             $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::SEVEN, ImageTypes::TESTING)
         );
         $this->assertEquals(
-            getcwd() . "/resources/images/testing/8",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::EIGHT, ImageTypes::TESTING)
-        );
-        $this->assertEquals(
-            getcwd() . "/resources/images/testing/9",
-            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::NINE, ImageTypes::TESTING)
+            "/var/www/tests/Services/MachineLearning/ImagesDataSet/resources/images/testing/3",
+            $this->transformer->getFolderImagesPathFromTypeAndValue(ImageValues::THREE, ImageTypes::TESTING)
         );
     }
     public function testGetImagesPathsListFromFolderImagesPath()
@@ -186,7 +125,6 @@ class ImageTransformerTest extends TestCase
     }
     public function testGetUnlabeledDatasetFromTransformedImages(): void
     {
-        ini_set('memory_limit', '1024M');
         $dataset = $this->transformer->getDatasetFromTransformedImages(
             [
                 [imagecreatefrompng(__DIR__ . "/resources/good_image_1.png")],
@@ -195,10 +133,17 @@ class ImageTransformerTest extends TestCase
             ]
         );
         $this->assertInstanceOf(Unlabeled::class, $dataset);
-
-        var_dump($this->transformer->getDatasetFromImageTypes(
+    }
+    public function testGetDatasetFromTraining(): void
+    {
+        $transformer = new ImageTransformer(__DIR__ . "/resources/images");
+        $result = $transformer->getDatasetFromImageTypes(
             ImageTypes::TRAINING
-        ));
-        ini_set('memory_limit', '128M');
+        );
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+        $this->assertInstanceOf(Dataset::class, $result["dataset"]);
+        $this->assertIsArray($result["labels"]);
+        $this->assertContainsOnlyString($result["labels"]);
     }
 }

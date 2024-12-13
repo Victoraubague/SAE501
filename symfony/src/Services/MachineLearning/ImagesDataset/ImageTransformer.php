@@ -11,6 +11,7 @@ use Rubix\ML\Transformers\ImageVectorizer;
 
 class ImageTransformer
 {
+    public function __construct(private readonly string $pathResources){}
     /**
      * Transform an image into an array of images
      * @return GdImage[]
@@ -31,7 +32,8 @@ class ImageTransformer
     }
     public function getFolderImagesPathFromTypeAndValue(ImageValues $value, ImageTypes $type): string
     {
-        return getcwd() . "/resources/images/" . $type->value . "/" . $value->value;
+        //return getcwd() . "/resources/images/" . $type->value . "/" . $value->value;
+        return $this->pathResources . "/" . $type->value . "/" . $value->value;
     }
     /**
      * Get the list of png images paths from a folder path
@@ -81,7 +83,7 @@ class ImageTransformer
     }
 
     /**
-     * @return array<Dataset|array<string>> ['dataset' => Dataset, 'labels' => Labels]
+     * @return array<Dataset|array<string>> ['dataset' => Dataset, 'labels' => [Labels]]
      */
     public function getDatasetFromImageTypes(
         ImageTypes $type
@@ -90,6 +92,11 @@ class ImageTransformer
         $images = [];
         $labels = [];
         foreach (ImageValues::cases() as $values) {
+            //check folder exists
+            if (!$this->isFolderExist($values, $type))
+            {
+                continue;
+            }
             //get directory path
             $folderPath = $this->getFolderImagesPathFromTypeAndValue($values, $type);
             //get images paths
@@ -112,5 +119,11 @@ class ImageTransformer
             ),
             'labels' => $labels
         ];
+    }
+
+    private function isFolderExist(ImageValues $value, ImageTypes $type): bool
+    {
+        $folderPath = $this->getFolderImagesPathFromTypeAndValue($value, $type);
+        return file_exists($folderPath);
     }
 }
