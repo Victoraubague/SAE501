@@ -136,8 +136,7 @@ class ImageTransformerTest extends TestCase
     }
     public function testGetDatasetFromTraining(): void
     {
-        $transformer = new ImageTransformer(__DIR__ . "/resources/images");
-        $result = $transformer->getDatasetFromImageTypes(
+        $result = $this->transformer->getDatasetFromImageTypes(
             ImageTypes::TRAINING
         );
         $this->assertIsArray($result);

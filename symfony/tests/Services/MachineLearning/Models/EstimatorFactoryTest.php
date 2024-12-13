@@ -13,10 +13,10 @@ class EstimatorFactoryTest extends TestCase
         $estimator = EstimatorFactory::createClassificationTree();
         $this->assertInstanceOf(ClassificationTree::class, $estimator);
     }
-    /*public function testNewTrainedClassificationTree(): void
+    public function testNewTrainedClassificationTree(): void
     {
-        $estimator = EstimatorFactory::newTrainedClassificationTree();
+        $estimator = EstimatorFactory::newTrainedClassificationTree(__DIR__ . '/../ImagesDataSet/Resources/images');
         $this->assertInstanceOf(ClassificationTree::class, $estimator);
         $this->assertTrue($estimator->trained());
-    }*/
+    }
 }
