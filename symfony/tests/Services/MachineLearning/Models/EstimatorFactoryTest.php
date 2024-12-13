@@ -15,8 +15,16 @@ class EstimatorFactoryTest extends TestCase
     }
     public function testNewTrainedClassificationTree(): void
     {
-        $estimator = EstimatorFactory::newTrainedClassificationTree(__DIR__ . '/../ImagesDataSet/Resources/images');
+        $pathResources = __DIR__ . '/../ImagesDataSet/Resources/images';
+        $estimator = EstimatorFactory::newTrainedClassificationTree($pathResources);
         $this->assertInstanceOf(ClassificationTree::class, $estimator);
         $this->assertTrue($estimator->trained());
+    }
+    public function testPersisteNewTrainedClassificationTree(): void
+    {
+        $pathResources = __DIR__ . '/../ImagesDataSet/Resources/images';
+        $pathResults = __DIR__ . '/../ImagesDataSet/Resources/models';
+        EstimatorFactory::persisteNewTrainedClassificationTree($pathResources, $pathResults);
+        $this->assertFileExists($pathResults . '/classification_tree.rbx');
     }
 }
