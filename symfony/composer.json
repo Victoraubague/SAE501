@@ -6,7 +6,9 @@
     "require": {
         "php": ">=8.2",
         "ext-ctype": "*",
+        "ext-gd": "*",
         "ext-iconv": "*",
+        "rubix/ml": "^2.5",
         "symfony/asset": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
@@ -16,9 +18,6 @@
         "symfony/runtime": "7.2.*",
         "symfony/twig-bundle": "7.2.*",
         "symfony/yaml": "7.2.*"
-    },
-    "require-dev": {
-        "symfony/maker-bundle": "^1.61"
     },
     "config": {
         "allow-plugins": {
@@ -69,5 +68,9 @@
             "allow-contrib": false,
             "require": "7.2.*"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11",
+        "symfony/maker-bundle": "^1.61"
     }
 }
