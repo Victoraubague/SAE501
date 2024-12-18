@@ -7,8 +7,6 @@ use App\Services\MachineLearning\ImagesDataset\ImageTypes;
 use Rubix\ML\Classifiers\ClassificationTree;
 use Rubix\ML\PersistentModel;
 use Rubix\ML\Persisters\Filesystem;
-use Rubix\ML\Serializers\RBX;
-use Rubix\ML\Transformers\OneHotEncoder;
 
 class EstimatorFactory
 {

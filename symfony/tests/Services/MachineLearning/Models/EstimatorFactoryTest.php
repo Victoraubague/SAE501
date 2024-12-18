@@ -22,8 +22,10 @@ class EstimatorFactoryTest extends TestCase
     }
     public function testPersisteNewTrainedClassificationTree(): void
     {
-        $pathResources = __DIR__ . '/../ImagesDataSet/Resources/images';
-        $pathResults = __DIR__ . '/../ImagesDataSet/Resources/models';
+        $pathResources = __DIR__ . '/../ImagesDataSet/resources/images';
+        $pathResults = __DIR__ . '/../ImagesDataSet/resources/models';
+        if (file_exists($pathResults . '/classification_tree.rbx'))
+            unlink($pathResults . '/classification_tree.rbx');
         EstimatorFactory::persisteNewTrainedClassificationTree($pathResources, $pathResults);
         $this->assertFileExists($pathResults . '/classification_tree.rbx');
     }
