@@ -7,11 +7,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Rubix\ML\PersistentModel;
+use App\Services\MachineLearning\ImagesDataset\ImageTransformer;
 
 class UploadController extends AbstractController
 {
     /**
-     * Gère l'upload via AJAX et traite l'image ailleurs.
+     * Gère l'upload via AJAX et traite l'image avec l'IA.
      *
      * @param Request $request
      * @return JsonResponse
@@ -26,25 +28,51 @@ class UploadController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => 'Aucune image sélectionnée.'], 400);
         }
 
-        // autoriser seulement PNG et JPEG
         $allowedMimeTypes = $this->getParameter('allowed_mime_types');
         if (!in_array($image->getMimeType(), $allowedMimeTypes, true)) {
             return new JsonResponse(['status' => 'error', 'message' => 'Seuls les fichiers PNG et JPEG sont acceptés.'], 400);
         }
-
-        // Vérif taille du fichier
         $maxSize = 5 * 1024 * 1024; // 5MB
         if ($image->getSize() > $maxSize) {
             return new JsonResponse(['status' => 'error', 'message' => 'Le fichier est trop volumineux.'], 400);
         }
 
+        $uploadsDir = $this->getParameter('kernel.project_dir') . '/uploads';
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+        $filePath = $uploadsDir . '/' . uniqid() . '.' . $image->guessExtension();
+        $image->move($uploadsDir, basename($filePath));
 
-        $processedResult = 'Faut link ici la méthode de l/ia';
+        try {
+            $modelPath = $this->getParameter('kernel.project_dir') . '/resources/models/classification_tree.rbx';
+            $model = PersistentModel::load(new \Rubix\ML\Persisters\Filesystem($modelPath));
 
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Traitement de l\'image réussi.',
-            'data' => $processedResult,
-        ], 200);
+            $imageTransformer = new ImageTransformer($uploadsDir);
+            $transformedImage = $imageTransformer->transformImage($filePath);
+            $dataset = $imageTransformer->getDatasetFromTransformedImages([$transformedImage]);
+
+            $predictions = $model->predict($dataset);
+
+            unlink($filePath);
+
+            error_log('Résultats de la prédiction : ' . implode(', ', $predictions));
+
+            $html = '<div id="prediction-result">';
+            $html .= '<p>Résultat de la prédiction : Image = ' . $predictions[0] . '</p>';
+            $html .= '</div>';
+
+            return new JsonResponse([
+                'status' => 'success',
+                'message' => 'Traitement de l\'image réussi.',
+                'data' => $html,
+            ], 200);
+        } catch (\Exception $e) {
+
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => 'Une erreur s\'est produite lors du traitement : ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
