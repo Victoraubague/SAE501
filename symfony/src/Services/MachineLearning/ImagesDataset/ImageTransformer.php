@@ -103,14 +103,14 @@ class ImageTransformer
             $imagesPaths = $this->getImagesPathsListFromFolderImagesPath($folderPath);
             //get transformed images and labels
             [
-                'images' => $images,
-                'labels' => $labels
+                'images' => $_images_,
+                'labels' => $_labels_
             ] = $this->getTransformedImagesAndLabelsFromImagesPathsList(
                 $imagesPaths,
                 $values->value
             );
-            array_push($images, ...$images);
-            array_push($labels, ...$labels);
+            array_push($images, ...$_images_);
+            array_push($labels, ...$_labels_);
         }
         return [
             'dataset' => $this->getDatasetFromTransformedImages(

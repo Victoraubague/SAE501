@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 use App\Services\MachineLearning\Models\EstimatorFactory;
 
-ini_set('memory_limit', '1G');
+ini_set('memory_limit', '3G');
 
 $pathResources = getcwd() . "/resources/images";
 $pathResults = getcwd() . "/resources/models";
