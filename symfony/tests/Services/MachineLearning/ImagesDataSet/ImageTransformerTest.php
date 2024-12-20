@@ -21,7 +21,7 @@ class ImageTransformerTest extends TestCase
     public function testTransformImage(): void
     {
         $result = $this->transformer->transformImage(
-            getcwd() . "/resources/images/training/0/1.png"
+            __DIR__ . "/resources/images/training/3/good_image_1.png"
         );
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
